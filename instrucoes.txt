@@ -1,0 +1,9 @@
+O JMS ActiveAMQ é um middleware que fica entre uma aplicação que envia mensagem (Provider)
+e o consumidor (Consumer). Essa mensagem pode ser de vários tipos e formatos
+
+		Provider <-> AMQ <-> Consumer 
+		
+1- Entrar no site ActiveAMQ e baixar o AMQ classic
+2- Para subir o borker Entrar na pasta /bin do AMQ e executar o comando sh activemq console
+3- Criar projeto no eclipse como Maven e incluir as bibliotecas que estão nesse projeto JMS
+4- Seguir o padrão desse projeto.
