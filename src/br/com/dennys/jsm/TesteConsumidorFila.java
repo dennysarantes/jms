@@ -1,6 +1,5 @@
 package br.com.dennys.jsm;
 
-import java.util.Iterator;
 import java.util.Scanner;
 
 import javax.jms.Connection;
@@ -10,16 +9,15 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
-import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 import javax.naming.InitialContext;
 
 //Este código é para receber uma MENSAGEM! Específica! Para ficar on-line recebendo as msgs de forma instantânea ver o restante
 //do projeto.
-public class TesteProdutor {
+public class TesteConsumidorFila {
 
-	@SuppressWarnings("resource")
+	@SuppressWarnings("resource") 
 	public static void main(String[] args) throws Exception {
 		
 		
@@ -39,19 +37,31 @@ public class TesteProdutor {
 		
 		//Nome da fila configurado no jndi.properties
 		Destination filaFinanceiro = (Destination) contextAmq.lookup("financeiro");
-
-		MessageProducer producer = session.createProducer(filaFinanceiro);
+		MessageConsumer consumer = session.createConsumer(filaFinanceiro);
 		
 		
+		consumer.setMessageListener(new MessageListener() {
+			
+			@Override
+			public void onMessage(Message message) {
+			
+				TextMessage textoDaMensagem = (TextMessage) message;
+				try {
+					System.out.println("Mensagem recebida: " + textoDaMensagem.getText());
+				} catch (JMSException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
+		});
 		
-		for (int i = 0; i < 500; i++) {
-			Message mensagem = session.createTextMessage("<pedido><id>" + i + "</id></pedido>");
-			producer.send(mensagem);
-			System.out.println("Pedido " + i + " enviado.");
-		}
 		
-		//producer.send(mensagem);
-		//new Scanner(System.in).nextLine();
+		//Message message = consumer.receive(); //essa linha faz com que o consumer receba a msg mais antiga em fila
+		
+		//System.out.println("Recebendo msg: " + message);
+		
+		new Scanner(System.in).nextLine();
 		
 		session.close();
 		connection.close();
